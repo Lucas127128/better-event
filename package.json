@@ -23,18 +23,17 @@
   "scripts": {
     "build": "tsdown",
     "test": "vitest",
-    "typecheck": "tsgo --noEmit",
     "release": "bumpp",
     "prepublishOnly": "pnpm run build",
     "fmt": "oxfmt",
-    "lint": "oxlint"
+    "lint": "oxlint --type-aware"
   },
   "devDependencies": {
-    "@types/node": "^25.6.2",
     "@typescript/native-preview": "7.0.0-dev.20260509.2",
     "bumpp": "^11.1.0",
     "oxfmt": "^0.53.0",
     "oxlint": "^1.68.0",
+    "oxlint-tsgolint": "^0.23.0",
     "tsdown": "^0.22.0",
     "vitest": "^4.1.5"
   }
