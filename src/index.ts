@@ -1,5 +1,6 @@
 type EventHandler<T> = (data: T) => Promise<void>;
 type EventMap = Record<string, { handler: EventHandler<any>; signal?: AbortSignal }>;
+export type EventEmitter<T extends EventMap> = ReturnType<typeof createEventEmitter<T>>;
 
 function attachAbortListener(events: EventMap, debug: boolean) {
   for (const [eventKey, event] of Object.entries(events)) {
@@ -15,12 +16,31 @@ function attachAbortListener(events: EventMap, debug: boolean) {
 }
 
 /**
- * Creates an event emitter that allows you to define and emit events with async handlers.
- * @param params - The event emitter configuration.
- * @returns An object with an `emit` method to trigger events.
+ * Creates an event emitter with async handlers.
+ * @param params - The event handler and configuration.
+ * @returns An EventEmitter instance.
+ * @example
+ * ```ts
+ * const emitter = createEventEmitter({
+ *   on: {
+ *     event: {
+ *       handler: async (data: string) => {
+ *         console.log(data);
+ *       },
+ *       debug: { name: 'event' },
+ *     },
+ *   },
+ * });
+ * ```
  */
 export function createEventEmitter<T extends EventMap>(params: {
+  /** The event map defining event names and handlers.
+   * @property handler - the event handler function to call when the event is emitted
+   * @property debug - a name for the event to be console.log() when event is emitted
+   */
   on: T;
+  /** (Optional) a name for the event to be console.log() when event is emitted
+   * @property name - the name of the event to be logged */
   debug?: { name: string };
 }) {
   const events = params.on;

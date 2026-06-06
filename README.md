@@ -54,9 +54,28 @@ create an event emitter:
     });
     ```
 
-- debug: (optional) a name for the event to be console.log() when event is emitted
+- signal: (optional) an AbortSignal to abort the event listener
+  - `signal?: AbortSignal`
+     Example:
+    ```ts
+    const { signal } = new AbortController();
+    const emitter = createEventEmitter({
+      on: {
+        event: {
+          handler: async (data: string) => {
+            console.log(data);
+          },
+          signal,
+        },
+      },
+    });
+    ```
 
-  - `debug?: {name: string}`
+#### debug
+
+(optional) a name for the event to be console.log() when event is emitted
+
+- `debug?: {name: string}`
   - Example:
     ```ts
     const emitter = createEventEmitter({
@@ -65,8 +84,8 @@ create an event emitter:
           handler: async (data: string) => {
             console.log(data);
           },
-          debug: { name: 'event' },
         },
+        debug: { name: 'event' },
       },
     });
     ```
