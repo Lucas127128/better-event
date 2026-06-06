@@ -1,3 +1,8 @@
+/**
+ * Creates an event emitter that allows you to define and emit events with async handlers.
+ * @param params - The event emitter configuration.
+ * @returns An object with an `emit` method to trigger events.
+ */
 export function createEventEmitter<T extends Record<string, (data: any) => Promise<void>>>(params: {
   on: T;
   debug?: { name: string };
