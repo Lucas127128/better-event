@@ -24,7 +24,7 @@
     "build": "tsdown",
     "test": "vitest",
     "release": "bumpp",
-    "prepublishOnly": "pnpm run build",
+    "prepublishOnly": "bun run build",
     "fmt": "oxfmt",
     "lint": "oxlint --type-aware"
   },
