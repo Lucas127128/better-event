@@ -5,5 +5,6 @@ export default defineConfig({
     tsgo: true,
   },
   exports: true,
+  minify: true,
   // ...config options
 });
