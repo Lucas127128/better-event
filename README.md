@@ -1,23 +1,23 @@
-# tsdown-starter
+# better-event
 
-A starter for creating a TypeScript package.
+A better event emitter with type safety! (Inspired by [emittery](https://github.com/sindresorhus/emittery))
 
 ## Development
 
 - Install dependencies:
 
 ```bash
-npm install
+bun install
 ```
 
 - Run the unit tests:
 
 ```bash
-npm run test
+bun run test
 ```
 
 - Build the library:
 
 ```bash
-npm run build
+bun run build
 ```
