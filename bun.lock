@@ -5,7 +5,6 @@
     "": {
       "name": "tsdown-starter",
       "devDependencies": {
-        "@typescript/native-preview": "7.0.0-dev.20260509.2",
         "bumpp": "^11.1.0",
         "oxfmt": "^0.53.0",
         "oxlint": "^1.68.0",
