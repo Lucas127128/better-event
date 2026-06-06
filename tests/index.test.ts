@@ -6,7 +6,7 @@ describe('createEventEmitter', () => {
     const fn = vi.fn().mockResolvedValue(undefined);
     const emitter = createEventEmitter({
       on: {
-        a: fn,
+        a: { handler: fn },
       },
     });
     await emitter.emit('a', { a: 'b' });
