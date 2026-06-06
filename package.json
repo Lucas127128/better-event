@@ -1,6 +1,6 @@
 {
   "name": "better-event",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A better event emitter.",
   "homepage": "https://github.com/Lucas127128/better-event#readme",
   "bugs": {
