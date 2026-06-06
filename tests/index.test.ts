@@ -1,4 +1,4 @@
-import { expect, test, vi } from "vitest";
+import { expect, test, vi, describe } from "vitest";
 import { createEventEmitter } from "../src";
 
 describe("createEventEmitter", () => {
