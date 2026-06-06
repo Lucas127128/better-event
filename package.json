@@ -1,10 +1,10 @@
 {
-  "name": "tsdown-starter",
+  "name": "better-event",
   "version": "0.0.1",
-  "description": "A starter for creating a TypeScript package.",
-  "homepage": "https://github.com/author/library#readme",
+  "description": "A better event emitter.",
+  "homepage": "https://github.com/Lucas127128/better-event#readme",
   "bugs": {
-    "url": "https://github.com/author/library/issues"
+    "url": "https://github.com/Lucas127128/better-event/issues"
   },
   "license": "MIT",
   "author": "Lucas Leung kayauleung2024@gmail.com",
