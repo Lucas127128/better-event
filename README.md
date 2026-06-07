@@ -1,7 +1,9 @@
 # better-event
 
+![license](https://img.shields.io/github/license/Lucas127128/better-event)
 ![testing](https://github.com/Lucas127128/better-event/workflows/testing/badge.svg)
 ![publish](https://github.com/Lucas127128/better-event/workflows/publish/badge.svg)
+![check](https://github.com/Lucas127128/better-event/workflows/static-check/badge.svg)
 
 An isomorphic event emitter with type safety! (Inspired by [emittery](https://github.com/sindresorhus/emittery))
 
@@ -99,17 +101,33 @@ create an event emitter:
     });
     ```
 
-### emitter.emit(eventKey, data)
+### const emitter = createEventEmitter(options)
+
+#### `emitter.emit(eventKey, data)`
 
 Emit an event with the key and data.
 
+Example:
+
 ```ts
+const emitter = createEventEmitter({
+  on: {
+    event: {
+      handler: async () => {
+        console.log('hello world');
+      },
+    },
+  },
+});
+
 await emitter.emit('event', 'data');
 ```
 
-### emitter.disable(eventKey)
+#### `emitter.disable(eventKey)`
 
 Disable an event listener. After disabling, emitting the event does nothing.
+
+Example:
 
 ```ts
 const emitter = createEventEmitter({
