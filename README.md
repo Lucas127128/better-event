@@ -70,6 +70,7 @@ create an event emitter:
 - signal: (optional) an AbortSignal to abort the event listener
   - `signal?: AbortSignal`
     Example:
+
     ```ts
     const controller = new AbortController();
     const signal = controller.signal;
@@ -83,9 +84,9 @@ create an event emitter:
         },
       },
     });
-    
+
     controller.abort();
-    await emitter.emit('event', 'hello') // nothing happens
+    await emitter.emit('event', 'hello'); // nothing happens
     ```
 
 #### debug
@@ -94,6 +95,7 @@ create an event emitter:
 
 - `debug?: {name: string}`
   - Example:
+
     ```ts
     const emitter = createEventEmitter({
       on: {
@@ -105,7 +107,7 @@ create an event emitter:
       },
       debug: { name: 'event' },
     });
-    
+
     await emitter.emit('event', 'hello');
     // => hello
     // => {
