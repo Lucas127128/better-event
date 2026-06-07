@@ -10,14 +10,19 @@ An isomorphic event emitter with type safety! (Inspired by [emittery](https://gi
 ```bash
 npm install better-event
 ```
+
 ## Quick example
 
 ```ts
-import { createEventEmitter } from "better-event";
+import { createEventEmitter } from 'better-event';
 
 const emitter = createEventEmitter({
   on: {
-    event: { handler: async (data:string) => {console.log(data)} },
+    event: {
+      handler: async (data: string) => {
+        console.log(data);
+      },
+    },
   },
 });
 await emitter.emit('event', 'hello world');
@@ -33,7 +38,7 @@ await emitter.emit('event', 'hello world');
 
 ## Usage
 
-create an event emitter: 
+create an event emitter:
 
 ### createEventEmitter(options)
 
@@ -42,21 +47,25 @@ create an event emitter:
 #### on
 
 - handler: the event handler function to call when the event is emitted
-
   - `handler: (data: any) => Promise<void>`
 
     Example:
+
     ```ts
     const emitter = createEventEmitter({
       on: {
-        event: { handler: async (data:string) => {console.log(data)} },
+        event: {
+          handler: async (data: string) => {
+            console.log(data);
+          },
+        },
       },
     });
     ```
 
 - signal: (optional) an AbortSignal to abort the event listener
   - `signal?: AbortSignal`
-     Example:
+    Example:
     ```ts
     const { signal } = new AbortController();
     const emitter = createEventEmitter({
