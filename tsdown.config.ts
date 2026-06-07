@@ -6,5 +6,9 @@ export default defineConfig({
   },
   exports: true,
   minify: true,
-  // ...config options
+  platform: 'neutral',
+  publint: true,
+  attw: {
+    profile: 'esm-only',
+  },
 });
