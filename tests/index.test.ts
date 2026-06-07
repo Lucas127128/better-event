@@ -32,7 +32,7 @@ describe.concurrent('createEventEmitter', () => {
         a: { handler: fn, signal },
       },
     });
-    controller.abort('a');
+    controller.abort();
     await emitter.emit('a', { a: 'b' });
     expect(fn).not.toHaveBeenCalled();
   });

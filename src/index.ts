@@ -48,8 +48,23 @@ export function createEventEmitter<T extends EventMap>(params: {
   attachAbortListener(events, !!debug);
 
   return {
-    emit: async <K extends keyof T>(eventKey: K, data: Parameters<T[K]['handler']>[0]) => {
+    /**Emit an event with the key and data.
+     *
+     * @param eventKey - the key of the event to emit
+     * @param data - the data to pass to the event handler
+     * @example
+     * ```ts
+     * emitter.emit('event', 'data');
+     * ```
+     */
+    emit: async <K extends keyof T>(
+      eventKey: K,
+      ...args: Parameters<T[K]['handler']>[0] extends undefined
+        ? [data?: never]
+        : [data: Parameters<T[K]['handler']>[0]]
+    ) => {
       const handler = events[eventKey].handler;
+      const [data] = args;
       await handler(data);
       if (debug) {
         console.log({
@@ -60,6 +75,24 @@ export function createEventEmitter<T extends EventMap>(params: {
         });
       }
     },
+    /** Disable an event
+     * @param eventKey - the key of the event to disable
+     * @example
+     * ```ts
+     * const emitter = createEventEmitter({
+     *   on: {
+     *     event: {
+     *       handler: async () => {
+     *         console.log('hello world');
+     *       },
+     *     },
+     *   },
+     * });
+     * emitter.disable('event');
+     * //nothing happens
+     * emitter.emit('event');
+     * ```
+     */
     disable: (eventKey: keyof T) => {
       events[eventKey].handler = () => Promise.resolve();
       if (debug) {
