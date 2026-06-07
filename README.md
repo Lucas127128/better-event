@@ -5,7 +5,7 @@
 
 An isomorphic event emitter with type safety! (Inspired by [emittery](https://github.com/sindresorhus/emittery))
 
-## installation
+## Installation
 
 ```bash
 npm install better-event
@@ -28,7 +28,7 @@ const emitter = createEventEmitter({
 await emitter.emit('event', 'hello world');
 ```
 
-## features
+## Features
 
 - create an event emitter with createEventEmitter()
 - register event listeners when initializing
@@ -94,10 +94,36 @@ create an event emitter:
             console.log(data);
           },
         },
-        debug: { name: 'event' },
       },
+      debug: { name: 'event' },
     });
     ```
+
+### emitter.emit(eventKey, data)
+
+Emit an event with the key and data.
+
+```ts
+await emitter.emit('event', 'data');
+```
+
+### emitter.disable(eventKey)
+
+Disable an event listener. After disabling, emitting the event does nothing.
+
+```ts
+const emitter = createEventEmitter({
+  on: {
+    event: {
+      handler: async () => {
+        console.log('hello world');
+      },
+    },
+  },
+});
+emitter.disable('event');
+await emitter.emit('event'); // nothing happens
+```
 
 ## Development
 
