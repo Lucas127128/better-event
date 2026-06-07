@@ -111,7 +111,7 @@ create an event emitter:
     await emitter.emit('event', 'hello');
     // => hello
     // => {
-    //      time: "6/7/2026, 2:23:27 PM",
+    //      time: "6/6/2026, 2:23:27 PM",
     //      name: "event",
     //      eventKey: "event",
     //      data: "hello",
@@ -157,8 +157,12 @@ const emitter = createEventEmitter({
     },
   },
 });
+await emitter.emit('event');
+// => hello world
+
 emitter.disable('event');
-await emitter.emit('event'); // nothing happens
+await emitter.emit('event');
+// nothing happens
 ```
 
 ## Development
