@@ -1,5 +1,8 @@
 type EventHandler<T> = (data: T) => Promise<void>;
-type EventMap = Record<string, { handler: EventHandler<any>; signal?: AbortSignal }>;
+type EventMap = Record<
+  string,
+  { handler: EventHandler<any>; signal?: AbortSignal; timeout?: number }
+>;
 export type EventEmitter<T extends EventMap> = ReturnType<typeof createEventEmitter<T>>;
 
 function attachAbortListener(events: EventMap, debug: boolean) {
@@ -36,7 +39,8 @@ function attachAbortListener(events: EventMap, debug: boolean) {
 export function createEventEmitter<T extends EventMap>(params: {
   /** The event map defining event names and handlers.
    * @property handler - the event handler function to call when the event is emitted
-   * @property debug - a name for the event to be console.log() when event is emitted
+   * @property debug - (optional) a name for the event to be console.log() when event is emitted
+   * @property timeout - (optional) the maximum time in milliseconds to wait for the event handler to complete
    */
   on: T;
   /** (Optional) a name for the event to be console.log() when event is emitted
@@ -65,7 +69,15 @@ export function createEventEmitter<T extends EventMap>(params: {
     ) => {
       const handler = events[eventKey].handler;
       const [data] = args;
-      await handler(data);
+      await Promise.race([
+        handler(data),
+        new Promise((_, reject) => {
+          setTimeout(() => {
+            reject(new Error(`Event ${String(eventKey)} timed out`));
+          }, events[eventKey].timeout ?? 0);
+        }),
+      ]);
+
       if (debug) {
         console.log({
           time: new Date().toLocaleString(),
