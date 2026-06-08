@@ -1,6 +1,6 @@
 {
   "name": "better-event",
-  "version": "0.2.1",
+  "version": "0.3.0-beta.1",
   "description": "A better event emitter.",
   "homepage": "https://github.com/Lucas127128/better-event#readme",
   "bugs": {
@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@arethetypeswrong/core": "^0.18.3",
+    "@typescript/native-preview": "^7.0.0-dev.20260607.1",
     "bumpp": "^11.1.0",
     "oxfmt": "^0.53.0",
     "oxlint": "^1.68.0",
