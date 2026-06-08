@@ -2,14 +2,31 @@
   "name": "better-event",
   "version": "0.3.3",
   "description": "A better event emitter.",
+  "keywords": [
+    "addeventlistener",
+    "async",
+    "await",
+    "dispatch",
+    "dispatcher",
+    "emit",
+    "emitter",
+    "event",
+    "listener",
+    "on",
+    "promise",
+    "pubsub",
+    "trigger",
+    "ts",
+    "typescript"
+  ],
   "homepage": "https://github.com/Lucas127128/better-event#readme",
   "bugs": {
     "url": "https://github.com/Lucas127128/better-event/issues"
   },
   "license": "MIT",
   "author": {
-    "email": "kayauleung2024@gmail.com",
-    "name": "Lucas Leung"
+    "name": "Lucas Leung",
+    "email": "kayauleung2024@gmail.com"
   },
   "repository": {
     "type": "git",
@@ -19,28 +36,11 @@
     "dist"
   ],
   "type": "module",
+  "sideEffects": false,
   "exports": {
     ".": "./dist/index.js",
     "./package.json": "./package.json"
   },
-  "keywords": [
-    "event",
-    "emitter",
-    "emit",
-    "dispatch",
-    "on",
-    "listener",
-    "pubsub",
-    "addeventlistener",
-    "dispatcher",
-    "trigger",
-    "typescript",
-    "ts",
-    "async",
-    "await",
-    "promise"
-  ],
-  "sideEffects": false,
   "scripts": {
     "build": "bunx -b tsdown",
     "test": "bunx -b vitest",
