@@ -5,17 +5,15 @@ type EventMap = Record<
 >;
 export type EventEmitter<T extends EventMap> = ReturnType<typeof createEventEmitter<T>>;
 
-function attachAbortListener(events: EventMap, debug: boolean) {
-  for (const [eventKey, event] of Object.entries(events)) {
-    if (event.signal) {
-      event.signal.addEventListener('abort', () => {
-        events[eventKey].handler = () => Promise.resolve();
-        if (debug) {
-          console.log(`Event ${eventKey} aborted`);
-        }
-      });
-    }
+export class TimeoutError extends Error {
+  constructor(timeout: number, eventKey: string) {
+    super(`Event ${eventKey} timed out`);
+    this.name = 'TimeoutError';
+    this.timeout = timeout;
+    this.eventKey = eventKey;
   }
+  timeout: number;
+  eventKey: string;
 }
 
 /**
@@ -56,6 +54,7 @@ export function createEventEmitter<T extends EventMap>(params: {
      *
      * @param eventKey - the key of the event to emit
      * @param data - the data to pass to the event handler
+     * @throws {TimeoutError} if the event handler does not complete within the specified timeout
      * @example
      * ```ts
      * emitter.emit('event', 'data');
@@ -73,7 +72,7 @@ export function createEventEmitter<T extends EventMap>(params: {
         handler(data),
         new Promise((_, reject) => {
           setTimeout(() => {
-            reject(new Error(`Event ${String(eventKey)} timed out`));
+            reject(new TimeoutError(events[eventKey].timeout ?? 0, String(eventKey)));
           }, events[eventKey].timeout ?? 0);
         }),
       ]);
@@ -112,4 +111,17 @@ export function createEventEmitter<T extends EventMap>(params: {
       }
     },
   };
+}
+
+function attachAbortListener(events: EventMap, debug: boolean) {
+  for (const [eventKey, event] of Object.entries(events)) {
+    if (event.signal) {
+      event.signal.addEventListener('abort', () => {
+        events[eventKey].handler = () => Promise.resolve();
+        if (debug) {
+          console.log(`Event ${eventKey} aborted`);
+        }
+      });
+    }
+  }
 }
