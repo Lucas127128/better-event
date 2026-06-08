@@ -28,4 +28,4 @@ jobs:
       - run: bun run build
       - run: bun run test
       - name: Publish to npm
-        run: npm publish --provenance
+        run: npm publish --provenance --tag beta
