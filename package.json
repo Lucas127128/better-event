@@ -7,7 +7,10 @@
     "url": "https://github.com/Lucas127128/better-event/issues"
   },
   "license": "MIT",
-  "author": "Lucas Leung kayauleung2024@gmail.com",
+  "author": {
+    "email": "kayauleung2024@gmail.com",
+    "name": "Lucas Leung"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Lucas127128/better-event.git"
@@ -20,6 +23,24 @@
     ".": "./dist/index.js",
     "./package.json": "./package.json"
   },
+  "keywords": [
+    "event",
+    "emitter",
+    "emit",
+    "dispatch",
+    "on",
+    "listener",
+    "pubsub",
+    "addeventlistener",
+    "dispatcher",
+    "trigger",
+    "typescript",
+    "ts",
+    "async",
+    "await",
+    "promise"
+  ],
+  "sideEffects": false,
   "scripts": {
     "build": "bunx -b tsdown",
     "test": "bunx -b vitest",
