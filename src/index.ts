@@ -12,8 +12,8 @@ export class TimeoutError extends Error {
     this.timeout = timeout;
     this.eventKey = eventKey;
   }
-  timeout: number;
-  eventKey: string;
+  timeout;
+  eventKey;
 }
 
 /**

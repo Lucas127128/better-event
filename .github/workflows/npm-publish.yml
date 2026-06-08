@@ -28,4 +28,10 @@ jobs:
       - run: bun run build
       - run: bun run test
       - name: Publish to npm
-        run: npm publish --provenance --tag beta
+        run: |
+          VERSION=$(jq -r .version package.json)
+          if [[ "$VERSION" == *"beta"* ]]; then
+            npm publish --tag beta --provenance
+          else
+            npm publish --provenance
+          fi
