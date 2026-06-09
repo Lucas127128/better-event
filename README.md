@@ -38,6 +38,8 @@ await emitter.emit('event', 'hello world');
 - register event listeners when initializing
 - emit events asynchronously with emit()
 - disable event listeners with disable()
+- timeout support for event handlers
+- abort event listeners with AbortSignal
 - type-safe event listener registration and emission
 
 > [!IMPORTANT]
@@ -93,6 +95,35 @@ create an event emitter:
     await emitter.emit('event', 'hello'); // nothing happens
     ```
 
+- timeout: (optional) the maximum time in milliseconds to wait for the event handler to complete
+  - `timeout?: number`
+    Throws `TimeoutError` if the handler does not complete within the specified time.
+
+    Example:
+
+    ```ts
+    import { createEventEmitter, TimeoutError } from 'better-event';
+
+    const emitter = createEventEmitter({
+      on: {
+        event: {
+          handler: async (data: string) => {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            console.log(data);
+          },
+          timeout: 100,
+        },
+      },
+    });
+
+    try {
+      await emitter.emit('event', 'hello');
+    } catch (error) {
+      console.error(error.message);
+      // => Event event timed out
+    }
+    ```
+
 #### debug
 
 (optional) a name for the event to be console.log() when event is emitted
@@ -127,6 +158,10 @@ create an event emitter:
 #### `emitter.emit(eventKey, data)`
 
 Emit an event with the key and data.
+
+Error: `TimeoutError`
+
+- Throws `TimeoutError` if a timeout is configured and the handler exceeds it.
 
 Example:
 
