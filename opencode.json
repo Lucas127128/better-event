@@ -1,0 +1,36 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["AGENTS.md"],
+  "lsp": true,
+  "formatter": {},
+  "permission": {
+    "*": "ask",
+    "bash": {
+      "*": "ask",
+      "git *": "deny",
+      "rm *": "deny",
+      "chmod *": "deny",
+      "grep *": "allow",
+      "Grep *": "allow",
+      "ls *": "allow",
+      "cd *": "allow",
+      "bun *": "allow",
+      "bunx *": "allow",
+      "cat *": "allow",
+      "find *": "allow",
+      "head *": "allow",
+      "tail *": "allow",
+      "sort *": "allow",
+      "rg *": "allow",
+      "date *": "allow"
+    },
+    "skill": "allow",
+    "edit": "allow",
+    "glob": "allow",
+    "read": "allow",
+    "todowrite": "allow",
+    "grep": "allow",
+    "webfetch": "allow",
+    "doom_loop": "allow"
+  }
+}
