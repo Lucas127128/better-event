@@ -1,7 +1,7 @@
 type EventHandler<T> = (data: T) => Promise<void> | void;
 type EventMap = Record<
   string,
-  { handler: EventHandler<any>; signal?: AbortSignal; timeout?: number }
+  { handler: EventHandler<any>; signal?: AbortSignal; timeout?: number } | EventHandler<any>
 >;
 export type EventEmitter<T extends EventMap> = ReturnType<typeof createEventEmitter<T>>;
 
@@ -45,6 +45,7 @@ export function createEventEmitter<T extends EventMap>(params: {
    * @property name - the name of the event to be logged */
   debug?: { name: string };
 }) {
+  type EventKeys = keyof T;
   const events = params.on;
   const debug = params.debug ?? undefined;
   attachAbortListener(events, !!debug);
@@ -60,20 +61,26 @@ export function createEventEmitter<T extends EventMap>(params: {
      * emitter.emit('event', 'data');
      * ```
      */
-    emit: async <K extends keyof T>(
+    emit: async <K extends EventKeys>(
       eventKey: K,
-      ...args: Parameters<T[K]['handler']>[0] extends undefined
-        ? [data?: never]
-        : [data: Parameters<T[K]['handler']>[0]]
+      ...args: T[K] extends EventHandler<any>
+        ? [data: Parameters<T[K]>[0]]
+        : T[K] extends { handler: EventHandler<any> }
+          ? Parameters<T[K]['handler']>[0] extends undefined
+            ? []
+            : [data: Parameters<T[K]['handler']>[0]]
+          : never
     ) => {
-      const handler = events[eventKey].handler;
+      const handler: EventHandler<any> =
+        'handler' in events[eventKey] ? events[eventKey].handler : events[eventKey];
+      const timeout = 'timeout' in events[eventKey] ? events[eventKey].timeout : undefined;
       const [data] = args;
       await Promise.race([
         handler(data),
         new Promise((_, reject) => {
           setTimeout(() => {
-            reject(new TimeoutError(events[eventKey].timeout ?? 0, String(eventKey)));
-          }, events[eventKey].timeout ?? 0);
+            reject(new TimeoutError(timeout ?? 0, String(eventKey)));
+          }, timeout ?? 0);
         }),
       ]);
 
@@ -104,8 +111,10 @@ export function createEventEmitter<T extends EventMap>(params: {
      * emitter.emit('event');
      * ```
      */
-    disable: (eventKey: keyof T) => {
-      events[eventKey].handler = () => Promise.resolve();
+    disable: <K extends EventKeys>(eventKey: K) => {
+      if ('handler' in events[eventKey]) events[eventKey].handler = () => Promise.resolve();
+      else (events[eventKey] as EventHandler<any>) = () => Promise.resolve();
+
       if (debug) {
         console.log(`Event ${String(eventKey)} disabled`);
       }
@@ -115,9 +124,12 @@ export function createEventEmitter<T extends EventMap>(params: {
 
 function attachAbortListener(events: EventMap, debug: boolean) {
   for (const [eventKey, event] of Object.entries(events)) {
+    if (!('handler' in event)) {
+      return;
+    }
     if (event.signal) {
       event.signal.addEventListener('abort', () => {
-        events[eventKey].handler = () => Promise.resolve();
+        event.handler = () => Promise.resolve();
         if (debug) {
           console.log(`Event ${eventKey} aborted`);
         }
