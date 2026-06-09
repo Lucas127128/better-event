@@ -40,6 +40,10 @@ await emitter.emit('event', 'hello world');
 - disable event listeners with disable()
 - type-safe event listener registration and emission
 
+> [!IMPORTANT]
+> This project is currently in its early stages.
+> Breaking changes may happen in every version without notice until `v1.0.0`.
+
 ## Usage
 
 create an event emitter:
