@@ -1,4 +1,4 @@
-type EventHandler<T> = (data: T) => Promise<void>;
+type EventHandler<T> = (data: T) => Promise<void> | void;
 type EventMap = Record<
   string,
   { handler: EventHandler<any>; signal?: AbortSignal; timeout?: number }
