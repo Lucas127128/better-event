@@ -5,6 +5,9 @@ type EventMap = Record<
 >;
 export type EventEmitter<T extends EventMap> = ReturnType<typeof createEventEmitter<T>>;
 
+/**
+ * Error thrown when an event handler exceeds its configured timeout.
+ */
 export class TimeoutError extends Error {
   constructor(timeout: number, eventKey: string) {
     super(`Event ${eventKey} timed out`);
@@ -12,7 +15,9 @@ export class TimeoutError extends Error {
     this.timeout = timeout;
     this.eventKey = eventKey;
   }
+  /** The timeout duration in milliseconds. */
   timeout;
+  /** The key of the event that timed out. */
   eventKey;
 }
 
@@ -28,7 +33,6 @@ export class TimeoutError extends Error {
  *       handler: async (data: string) => {
  *         console.log(data);
  *       },
- *       debug: { name: 'event' },
  *     },
  *   },
  * });
@@ -37,7 +41,7 @@ export class TimeoutError extends Error {
 export function createEventEmitter<T extends EventMap>(params: {
   /** The event map defining event names and handlers.
    * @property handler - the event handler function to call when the event is emitted
-   * @property debug - (optional) a name for the event to be console.log() when event is emitted
+   * @property signal - (optional) an AbortSignal to abort the event listener
    * @property timeout - (optional) the maximum time in milliseconds to wait for the event handler to complete
    */
   on: T;
@@ -93,7 +97,7 @@ export function createEventEmitter<T extends EventMap>(params: {
         });
       }
     },
-    /** Disable an event
+    /** Disable an event. After disabling, emitting the event does nothing.
      * @param eventKey - the key of the event to disable
      * @example
      * ```ts
@@ -107,8 +111,8 @@ export function createEventEmitter<T extends EventMap>(params: {
      *   },
      * });
      * emitter.disable('event');
-     * //nothing happens
      * emitter.emit('event');
+     * // nothing happens
      * ```
      */
     disable: <K extends EventKeys>(eventKey: K) => {
