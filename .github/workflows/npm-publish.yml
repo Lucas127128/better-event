@@ -11,6 +11,7 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    environment: npm-publish
     steps:
       - uses: actions/checkout@v6
       - name: Set up Bun
@@ -27,4 +28,10 @@ jobs:
       - run: bun run build
       - run: bun run test
       - name: Publish to npm
-        run: npm publish --provenance
+        run: |
+          VERSION=$(jq -r .version package.json)
+          if [[ "$VERSION" == *"beta"* ]]; then
+            npm publish --tag beta --provenance
+          else
+            npm publish --provenance
+          fi

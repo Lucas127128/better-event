@@ -1,13 +1,33 @@
 {
   "name": "better-event",
-  "version": "0.2.1",
+  "version": "0.3.3",
   "description": "A better event emitter.",
+  "keywords": [
+    "addeventlistener",
+    "async",
+    "await",
+    "dispatch",
+    "dispatcher",
+    "emit",
+    "emitter",
+    "event",
+    "listener",
+    "on",
+    "promise",
+    "pubsub",
+    "trigger",
+    "ts",
+    "typescript"
+  ],
   "homepage": "https://github.com/Lucas127128/better-event#readme",
   "bugs": {
     "url": "https://github.com/Lucas127128/better-event/issues"
   },
   "license": "MIT",
-  "author": "Lucas Leung kayauleung2024@gmail.com",
+  "author": {
+    "name": "Lucas Leung",
+    "email": "kayauleung2024@gmail.com"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Lucas127128/better-event.git"
@@ -16,6 +36,7 @@
     "dist"
   ],
   "type": "module",
+  "sideEffects": false,
   "exports": {
     ".": "./dist/index.js",
     "./package.json": "./package.json"
@@ -30,12 +51,14 @@
   },
   "devDependencies": {
     "@arethetypeswrong/core": "^0.18.3",
+    "@socketsecurity/bun-security-scanner": "^1.1.2",
+    "@typescript/native-preview": "^7.0.0-dev.20260605.1",
     "bumpp": "^11.1.0",
     "oxfmt": "^0.53.0",
     "oxlint": "^1.68.0",
     "oxlint-tsgolint": "^0.23.0",
     "publint": "^0.3.21",
     "tsdown": "^0.22.0",
-    "vitest": "^4.1.5"
+    "vitest": "^4.1.8"
   }
 }
