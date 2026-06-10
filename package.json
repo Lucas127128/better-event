@@ -52,7 +52,7 @@
   "devDependencies": {
     "@arethetypeswrong/core": "^0.18.3",
     "@socketsecurity/bun-security-scanner": "^1.1.2",
-    "@typescript/native-preview": "^7.0.0-dev.20260605.1",
+    "@typescript/native-preview": "^7.0.0-dev.20260607.1",
     "bumpp": "^11.1.0",
     "oxfmt": "^0.53.0",
     "oxlint": "^1.68.0",
