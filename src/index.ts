@@ -68,11 +68,11 @@ export function createEventEmitter<T extends EventMap>(params: {
     emit: async <K extends EventKeys>(
       eventKey: K,
       ...args: T[K] extends EventHandler<any>
-        ? Parameters<T[K]>[0] extends undefined
+        ? Parameters<T[K]>['length'] extends 0
           ? []
           : [data: Parameters<T[K]>[0]]
         : T[K] extends { handler: EventHandler<any> }
-          ? Parameters<T[K]['handler']>[0] extends undefined
+          ? Parameters<T[K]['handler']>['length'] extends 0
             ? []
             : [data: Parameters<T[K]['handler']>[0]]
           : never
@@ -81,14 +81,6 @@ export function createEventEmitter<T extends EventMap>(params: {
         'handler' in events[eventKey] ? events[eventKey].handler : events[eventKey];
       const timeout = 'timeout' in events[eventKey] ? events[eventKey].timeout : undefined;
       const [data] = args;
-      await Promise.race([
-        handler(data),
-        new Promise((_, reject) => {
-          setTimeout(() => {
-            reject(new TimeoutError(timeout ?? 0, String(eventKey)));
-          }, timeout ?? 0);
-        }),
-      ]);
 
       if (debug) {
         console.log({
@@ -98,6 +90,12 @@ export function createEventEmitter<T extends EventMap>(params: {
           data,
         });
       }
+      if (timeout) {
+        setTimeout(() => {
+          throw new TimeoutError(timeout, String(eventKey));
+        }, timeout);
+      }
+      await handler(data);
     },
     /** Disable an event. After disabling, emitting the event does nothing.
      * @param eventKey - the key of the event to disable
