@@ -1,6 +1,6 @@
 {
   "name": "better-event",
-  "version": "0.4.0-beta.1",
+  "version": "0.4.0",
   "description": "A better event emitter.",
   "keywords": [
     "addeventlistener",
