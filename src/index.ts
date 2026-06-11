@@ -128,7 +128,7 @@ export function createEventEmitter<T extends EventMap>(params: {
 
 function attachAbortListener(events: EventMap, debug: boolean) {
   for (const [eventKey, event] of Object.entries(events)) {
-    if (!('handler' in event)) return;
+    if (!('handler' in event)) continue;
 
     event.signal?.addEventListener('abort', () => {
       event.handler = () => Promise.resolve();
