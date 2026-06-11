@@ -119,25 +119,18 @@ export function createEventEmitter<T extends EventMap>(params: {
       if ('handler' in events[eventKey]) events[eventKey].handler = () => Promise.resolve();
       else (events[eventKey] as EventHandler<any>) = () => Promise.resolve();
 
-      if (debug) {
-        console.log(`Event ${String(eventKey)} disabled`);
-      }
+      if (debug) console.log(`Event ${String(eventKey)} disabled`);
     },
   };
 }
 
 function attachAbortListener(events: EventMap, debug: boolean) {
   for (const [eventKey, event] of Object.entries(events)) {
-    if (!('handler' in event)) {
-      return;
-    }
-    if (event.signal) {
-      event.signal.addEventListener('abort', () => {
-        event.handler = () => Promise.resolve();
-        if (debug) {
-          console.log(`Event ${eventKey} aborted`);
-        }
-      });
-    }
+    if (!('handler' in event)) return;
+
+    event.signal?.addEventListener('abort', () => {
+      event.handler = () => Promise.resolve();
+      if (debug) console.log(`Event ${eventKey} aborted`);
+    });
   }
 }
