@@ -68,7 +68,9 @@ export function createEventEmitter<T extends EventMap>(params: {
     emit: async <K extends EventKeys>(
       eventKey: K,
       ...args: T[K] extends EventHandler<any>
-        ? [data: Parameters<T[K]>[0]]
+        ? Parameters<T[K]>[0] extends undefined
+          ? []
+          : [data: Parameters<T[K]>[0]]
         : T[K] extends { handler: EventHandler<any> }
           ? Parameters<T[K]['handler']>[0] extends undefined
             ? []

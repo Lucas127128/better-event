@@ -21,14 +21,12 @@ import { createEventEmitter } from 'better-event';
 
 const emitter = createEventEmitter({
   on: {
-    event: {
-      handler: async (data: string) => {
-        console.log(data);
-      },
+    hello: (data: string) => {
+      console.log('hello', data);
     },
   },
 });
-await emitter.emit('event', 'hello world');
+await emitter.emit('hello', 'world');
 // => 'hello world'
 ```
 
@@ -41,6 +39,7 @@ await emitter.emit('event', 'hello world');
 - timeout support for event handlers
 - abort event listeners with AbortSignal
 - type-safe event listener registration and emission
+- exports `EventEmitter<T>` type helper for typing emitter instances
 
 > [!IMPORTANT]
 > This project is currently in its early stages.
@@ -57,17 +56,15 @@ create an event emitter:
 #### on
 
 - handler: the event handler function to call when the event is emitted
-  - `handler: (data: any) => Promise<void>`
+  - `handler: (data: T) => Promise<void> | void`
 
     Example:
 
     ```ts
     const emitter = createEventEmitter({
       on: {
-        event: {
-          handler: async (data: string) => {
-            console.log(data);
-          },
+        event: (data: string) => {
+          console.log(data);
         },
       },
     });
@@ -134,10 +131,8 @@ create an event emitter:
     ```ts
     const emitter = createEventEmitter({
       on: {
-        event: {
-          handler: async (data: string) => {
-            console.log(data);
-          },
+        event: (data: string) => {
+          console.log(data);
         },
       },
       debug: { name: 'event' },
@@ -155,13 +150,14 @@ create an event emitter:
 
 ### const emitter = createEventEmitter(options)
 
+#### `emitter.emit(eventKey)`
 #### `emitter.emit(eventKey, data)`
 
-Emit an event with the key and data.
+Emit an event with the key and optional data. The `data` argument can be omitted if the handler takes no parameters.
 
-Error: `TimeoutError`
-
-- Throws `TimeoutError` if a timeout is configured and the handler exceeds it.
+Error: `TimeoutError` with properties:
+- `.timeout` — the configured timeout duration in milliseconds
+- `.eventKey` — the key of the event that timed out
 
 Example:
 
@@ -169,7 +165,7 @@ Example:
 const emitter = createEventEmitter({
   on: {
     event: {
-      handler: async () => {
+      handler: () => {
         console.log('hello world');
       },
     },
@@ -190,7 +186,7 @@ Example:
 const emitter = createEventEmitter({
   on: {
     event: {
-      handler: async () => {
+      handler: () => {
         console.log('hello world');
       },
     },
