@@ -91,11 +91,17 @@ export function createEventEmitter<T extends EventMap>(params: {
         });
       }
       if (timeout) {
-        setTimeout(() => {
-          throw new TimeoutError(timeout, String(eventKey));
-        }, timeout);
+        await Promise.race([
+          handler(data),
+          new Promise((_, reject) => {
+            setTimeout(() => {
+              reject(new TimeoutError(timeout, String(eventKey)));
+            }, timeout);
+          }),
+        ]);
+      } else {
+        await handler(data);
       }
-      await handler(data);
     },
     /** Disable an event. After disabling, emitting the event does nothing.
      * @param eventKey - the key of the event to disable

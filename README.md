@@ -1,6 +1,6 @@
 # better-event
 
-[![npm version](https://img.shields.io/npm/v/better-event.svg)](https://npmjs.com)
+[![npm version](https://img.shields.io/npm/v/better-event)](https://www.npmjs.com/package/better-event)
 ![license](https://img.shields.io/github/license/Lucas127128/better-event)
 ![testing](https://github.com/Lucas127128/better-event/workflows/testing/badge.svg)
 ![publish](https://github.com/Lucas127128/better-event/workflows/publish/badge.svg)
@@ -27,7 +27,7 @@ const emitter = createEventEmitter({
   },
 });
 await emitter.emit('hello', 'world');
-// => 'hello world'
+// => hello world
 ```
 
 ## Features
@@ -63,8 +63,8 @@ create an event emitter:
     ```ts
     const emitter = createEventEmitter({
       on: {
-        event: (data: string) => {
-          console.log(data);
+        hello: (data: string) => {
+          console.log('hello', data);
         },
       },
     });
@@ -79,9 +79,9 @@ create an event emitter:
     const signal = controller.signal;
     const emitter = createEventEmitter({
       on: {
-        event: {
+        hello: {
           handler: async (data: string) => {
-            console.log(data);
+            console.log('hello', data);
           },
           signal,
         },
@@ -89,7 +89,7 @@ create an event emitter:
     });
 
     controller.abort();
-    await emitter.emit('event', 'hello'); // nothing happens
+    await emitter.emit('hello', 'world'); // nothing happens
     ```
 
 - timeout: (optional) the maximum time in milliseconds to wait for the event handler to complete
@@ -103,10 +103,10 @@ create an event emitter:
 
     const emitter = createEventEmitter({
       on: {
-        event: {
+        hello: {
           handler: async (data: string) => {
             await new Promise((resolve) => setTimeout(resolve, 1000));
-            console.log(data);
+            console.log('hello', data);
           },
           timeout: 100,
         },
@@ -114,10 +114,10 @@ create an event emitter:
     });
 
     try {
-      await emitter.emit('event', 'hello');
+      await emitter.emit('hello', 'world');
     } catch (error) {
       console.error(error.message);
-      // => Event event timed out
+      // => Event hello timed out
     }
     ```
 
@@ -131,31 +131,33 @@ create an event emitter:
     ```ts
     const emitter = createEventEmitter({
       on: {
-        event: (data: string) => {
-          console.log(data);
+        hello: (data: string) => {
+          console.log('hello', data);
         },
       },
-      debug: { name: 'event' },
+      debug: { name: 'hello' },
     });
 
-    await emitter.emit('event', 'hello');
-    // => hello
+    await emitter.emit('hello', 'world');
+    // => hello world
     // => {
     //      time: "6/6/2026, 2:23:27 PM",
-    //      name: "event",
-    //      eventKey: "event",
-    //      data: "hello",
+    //      name: "hello",
+    //      eventKey: "hello",
+    //      data: "world",
     //     }
     ```
 
 ### const emitter = createEventEmitter(options)
 
 #### `emitter.emit(eventKey)`
+
 #### `emitter.emit(eventKey, data)`
 
 Emit an event with the key and optional data. The `data` argument can be omitted if the handler takes no parameters.
 
 Error: `TimeoutError` with properties:
+
 - `.timeout` — the configured timeout duration in milliseconds
 - `.eventKey` — the key of the event that timed out
 
@@ -164,15 +166,13 @@ Example:
 ```ts
 const emitter = createEventEmitter({
   on: {
-    event: {
-      handler: () => {
-        console.log('hello world');
-      },
+    hello: () => {
+      console.log('hello world');
     },
   },
 });
 
-await emitter.emit('event');
+await emitter.emit('hello');
 // => hello world
 ```
 
@@ -185,18 +185,16 @@ Example:
 ```ts
 const emitter = createEventEmitter({
   on: {
-    event: {
-      handler: () => {
-        console.log('hello world');
-      },
+    hello: () => {
+      console.log('hello world');
     },
   },
 });
-await emitter.emit('event');
+await emitter.emit('hello');
 // => hello world
 
-emitter.disable('event');
-await emitter.emit('event');
+emitter.disable('hello');
+await emitter.emit('hello');
 // nothing happens
 ```
 
