@@ -44,6 +44,7 @@
   "scripts": {
     "build": "bunx -b tsdown",
     "test": "bunx -b vitest",
+    "test:coverage": "bunx -b vitest --coverage -w false",
     "release": "bumpp",
     "prepublishOnly": "bun run build",
     "fmt": "bunx -b oxfmt",
@@ -53,6 +54,7 @@
     "@arethetypeswrong/core": "^0.18.3",
     "@socketsecurity/bun-security-scanner": "^1.1.2",
     "@typescript/native-preview": "^7.0.0-dev.20260607.1",
+    "@vitest/coverage-istanbul": "4.1.8",
     "bumpp": "^11.1.0",
     "oxfmt": "^0.53.0",
     "oxlint": "^1.68.0",

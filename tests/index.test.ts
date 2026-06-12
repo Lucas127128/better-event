@@ -1,5 +1,5 @@
 import { expect, it, vi, describe } from 'vitest';
-import { createEventEmitter } from '../src';
+import { createEventEmitter, TimeoutError } from '../src';
 
 describe.concurrent('createEventEmitter', () => {
   it('emit', async () => {
@@ -35,5 +35,103 @@ describe.concurrent('createEventEmitter', () => {
     controller.abort();
     await emitter.emit('a', { a: 'b' });
     expect(fn).not.toHaveBeenCalled();
+  });
+
+  it('timeout rejects with TimeoutError', async () => {
+    const emitter = createEventEmitter({
+      on: {
+        a: { handler: async () => new Promise(() => {}), timeout: 1 },
+      },
+    });
+    await expect(emitter.emit('a')).rejects.toThrow(TimeoutError);
+  });
+
+  it('TimeoutError has correct name, timeout, and eventKey properties', async () => {
+    try {
+      const emitter = createEventEmitter({
+        on: {
+          testEvent: { handler: async () => new Promise(() => {}), timeout: 5 },
+        },
+      });
+      await emitter.emit('testEvent');
+    } catch (error) {
+      expect(error).toBeInstanceOf(TimeoutError);
+      if (!(error instanceof TimeoutError)) return;
+      expect(error.name).toBe('TimeoutError');
+      expect(error.timeout).toBe(5);
+      expect(error.eventKey).toBe('testEvent');
+    }
+  });
+
+  it('disable works with plain handler (non-object form)', async () => {
+    const fn = vi.fn(() => {});
+    const emitter = createEventEmitter({
+      on: { a: fn },
+    });
+    emitter.disable('a');
+    await emitter.emit('a');
+    expect(fn).not.toHaveBeenCalled();
+  });
+
+  it('debug logs on emit', async () => {
+    const log = vi.fn();
+    const fn = vi.fn().mockResolvedValue(undefined);
+    const emitter = createEventEmitter({
+      on: { a: { handler: fn } },
+      debug: { name: 'test-debug', logger: log },
+    });
+    await emitter.emit('a', 'data');
+    expect(log).toHaveBeenCalledWith(
+      expect.objectContaining({ name: 'test-debug', eventKey: 'a', data: 'data' }),
+    );
+  });
+
+  it('debug logs on disable', async () => {
+    const log = vi.fn();
+    const fn = vi.fn().mockResolvedValue(undefined);
+    const emitter = createEventEmitter({
+      on: { a: { handler: fn } },
+      debug: { name: 'test-debug', logger: log },
+    });
+    emitter.disable('a');
+    expect(log).toHaveBeenCalledWith('Event a disabled');
+  });
+
+  it('abort with debug logs', async () => {
+    const log = vi.fn(console.log);
+    const fn = vi.fn(() => {}).mockResolvedValue(undefined);
+    const controller = new AbortController();
+    const { signal } = controller;
+    const emitter = createEventEmitter({
+      on: { a: { handler: fn, signal } },
+      debug: { name: 'test', logger: log },
+    });
+    controller.abort();
+    await emitter.emit('a');
+    expect(fn).not.toHaveBeenCalled();
+    expect(log).toHaveBeenCalledWith('Event a aborted');
+  });
+
+  it('abort without custom log uses console.log fallback', async () => {
+    using spy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const fn = vi.fn().mockResolvedValue(undefined);
+    const controller = new AbortController();
+    const { signal } = controller;
+    const emitter = createEventEmitter({
+      on: { a: { handler: fn, signal } },
+      debug: { name: 'test' },
+    });
+    controller.abort();
+    await emitter.emit('a', 'data');
+    expect(fn).not.toHaveBeenCalled();
+    expect(spy).toHaveBeenCalledWith('Event a aborted');
+  });
+
+  it('handler resolves when no timeout set', async () => {
+    const fn = vi.fn().mockResolvedValue('ok');
+    const emitter = createEventEmitter({
+      on: { a: { handler: fn } },
+    });
+    await expect(emitter.emit('a', 'data')).resolves.toBeUndefined();
   });
 });
