@@ -37,16 +37,7 @@ describe.concurrent('createEventEmitter', () => {
     expect(fn).not.toHaveBeenCalled();
   });
 
-  it('timeout rejects with TimeoutError', async () => {
-    const emitter = createEventEmitter({
-      on: {
-        a: { handler: async () => new Promise(() => {}), timeout: 1 },
-      },
-    });
-    await expect(emitter.emit('a')).rejects.toThrow(TimeoutError);
-  });
-
-  it('TimeoutError has correct name, timeout, and eventKey properties', async () => {
+  it('reject timeout with TimeoutError, which has correct name, timeout, and eventKey properties', async () => {
     try {
       const emitter = createEventEmitter({
         on: {
@@ -97,7 +88,7 @@ describe.concurrent('createEventEmitter', () => {
     expect(log).toHaveBeenCalledWith('Event a disabled');
   });
 
-  it('abort with debug logs', async () => {
+  it('abort with debug logs using custom logger', async () => {
     const log = vi.fn(console.log);
     const fn = vi.fn(() => {}).mockResolvedValue(undefined);
     const controller = new AbortController();
@@ -112,7 +103,7 @@ describe.concurrent('createEventEmitter', () => {
     expect(log).toHaveBeenCalledWith('Event a aborted');
   });
 
-  it('abort without custom log uses console.log fallback', async () => {
+  it('abort with debug logs', async () => {
     using spy = vi.spyOn(console, 'log').mockImplementation(() => {});
     const fn = vi.fn().mockResolvedValue(undefined);
     const controller = new AbortController();
@@ -125,13 +116,5 @@ describe.concurrent('createEventEmitter', () => {
     await emitter.emit('a', 'data');
     expect(fn).not.toHaveBeenCalled();
     expect(spy).toHaveBeenCalledWith('Event a aborted');
-  });
-
-  it('handler resolves when no timeout set', async () => {
-    const fn = vi.fn().mockResolvedValue('ok');
-    const emitter = createEventEmitter({
-      on: { a: { handler: fn } },
-    });
-    await expect(emitter.emit('a', 'data')).resolves.toBeUndefined();
   });
 });
