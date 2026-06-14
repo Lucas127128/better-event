@@ -45,6 +45,7 @@
     "build": "bunx -b tsdown",
     "test": "bunx -b vitest",
     "test:coverage": "bunx -b vitest --coverage -w false",
+    "test:agent": "AI_AGENT=opencode bunx -b vitest -w false",
     "release": "bumpp",
     "prepublishOnly": "bun run build",
     "fmt": "bunx -b oxfmt",

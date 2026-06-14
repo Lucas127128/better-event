@@ -1,7 +1,9 @@
 type EventHandler<T> = (data: T) => Promise<void> | void;
-type EventMap = Record<
-  string,
-  { handler: EventHandler<any>; signal?: AbortSignal; timeout?: number } | EventHandler<any>
+type EventMap = Readonly<
+  Record<
+    string,
+    { handler: EventHandler<any>; signal?: AbortSignal; timeout?: number } | EventHandler<any>
+  >
 >;
 export type EventEmitter<T extends EventMap> = ReturnType<typeof createEventEmitter<T>>;
 
@@ -28,13 +30,11 @@ export class TimeoutError extends Error {
  * @example
  * ```ts
  * const emitter = createEventEmitter({
- *   on: {
- *     event: {
- *       handler: async (data: string) => {
- *         console.log(data);
- *       },
- *     },
- *   },
+ *  on: {
+ *    event: (data: string) => {
+ *      console.log(data);
+ *    },
+ *  },
  * });
  * ```
  */
@@ -52,11 +52,11 @@ export function createEventEmitter<T extends EventMap>(params: {
 }) {
   type EventKeys = keyof T;
   const events = params.on;
-  const debug = params.debug ?? undefined;
+  const debug = params.debug;
   const log = debug?.logger ?? console.log;
   const abortedEventKeys: EventKeys[] = [];
   for (const [eventKey, event] of Object.entries(events)) {
-    if (!('handler' in event)) continue;
+    if (!('signal' in event)) continue;
     event.signal?.addEventListener('abort', () => {
       abortedEventKeys.push(eventKey);
       log(`Event ${eventKey} aborted`);
@@ -77,13 +77,9 @@ export function createEventEmitter<T extends EventMap>(params: {
     emit: async <K extends EventKeys>(
       eventKey: K,
       ...args: T[K] extends EventHandler<any>
-        ? Parameters<T[K]>['length'] extends 0
-          ? []
-          : [data: Parameters<T[K]>[0]]
+        ? Parameters<T[K]>
         : T[K] extends { handler: EventHandler<any> }
-          ? Parameters<T[K]['handler']>['length'] extends 0
-            ? []
-            : [data: Parameters<T[K]['handler']>[0]]
+          ? Parameters<T[K]['handler']>
           : never
     ) => {
       if (abortedEventKeys.includes(eventKey)) return;
@@ -120,13 +116,11 @@ export function createEventEmitter<T extends EventMap>(params: {
      * ```ts
      * const emitter = createEventEmitter({
      *   on: {
-     *     event: {
-     *       handler: async () => {
-     *         console.log('hello world');
-     *       },
+     *     event: () => {
+     *       console.log('hello world');
      *     },
      *   },
-     * });
+     * })
      * emitter.disable('event');
      * emitter.emit('event');
      * // nothing happens
