@@ -4,15 +4,15 @@ Single-module isomorphic type-safe event emitter. Source in `src/index.ts`, test
 
 ## Commands (all use `bunx -b`)
 
-| Action       | Command                                          |
-| ------------ | ------------------------------------------------ |
-| Install      | `bun install`                                    |
-| Build        | `bun run build` (→ `bunx -b tsdown`)             |
-| Test         | `bun run test:agent` (→ `AI_AGENT=opencode bunx -b vitest -w false`)              |
-| Lint         | `bun run lint` (→ `bunx -b oxlint --type-aware`) |
-| Format       | `bun run fmt` (→ `bunx -b oxfmt`)                |
-| Format check | `bun fmt --check`                                |
-| Release      | `bun run release` (→ `bumpp`)                    |
+| Action       | Command                                                              |
+| ------------ | -------------------------------------------------------------------- |
+| Install      | `bun install`                                                        |
+| Build        | `bun run build` (→ `bunx -b tsdown`)                                 |
+| Test         | `bun run test:agent` (→ `AI_AGENT=opencode bunx -b vitest -w false`) |
+| Lint         | `bun run lint` (→ `bunx -b oxlint --type-aware`)                     |
+| Format       | `bun run fmt` (→ `bunx -b oxfmt`)                                    |
+| Format check | `bun fmt --check`                                                    |
+| Release      | `bun run release` (→ `bumpp`)                                        |
 
 ## Toolchain quirks
 
