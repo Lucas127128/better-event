@@ -1,4 +1,4 @@
-import { expect, it, vi, describe } from 'vitest';
+import { expect, it, vi, describe, expectTypeOf } from 'vitest';
 import { createEventEmitter, TimeoutError } from '../src';
 
 describe.concurrent('createEventEmitter', () => {
@@ -116,5 +116,20 @@ describe.concurrent('createEventEmitter', () => {
     await emitter.emit('a', 'data');
     expect(fn).not.toHaveBeenCalled();
     expect(spy).toHaveBeenCalledWith('Event a aborted');
+  });
+
+  it('infer type for .emit() when data is needed', () => {
+    const fn = vi.fn((data: string) => {});
+    const emitter = createEventEmitter({ on: { a: fn } });
+    expectTypeOf(emitter.emit).toBeCallableWith('a', '');
+    type Data = Parameters<typeof emitter.emit<'a'>>;
+    expectTypeOf<Data[1]>().toBeString();
+  });
+  it('infer type for .emit() when data is not needed', () => {
+    const fn = vi.fn(() => {});
+    const emitter = createEventEmitter({ on: { a: fn } });
+    expectTypeOf(emitter.emit).toBeCallableWith('a');
+    type Data = Parameters<typeof emitter.emit<'a'>>;
+    expectTypeOf<Data>().toEqualTypeOf<[eventKey: 'a']>();
   });
 });

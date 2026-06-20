@@ -6,7 +6,7 @@ export default defineConfig({
     clearMocks: true,
     experimental: { fsModuleCache: true },
     sequence: { concurrent: true },
-    typecheck: { enabled: true },
+    typecheck: { enabled: true, include: ['**/*.test.ts'] },
     coverage: {
       provider: 'istanbul',
     },
