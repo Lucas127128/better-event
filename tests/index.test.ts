@@ -119,15 +119,13 @@ describe.concurrent('createEventEmitter', () => {
   });
 
   it('infer type for .emit() when data is needed', () => {
-    const fn = vi.fn((_data: string) => {});
-    const emitter = createEventEmitter({ on: { a: fn } });
+    const emitter = createEventEmitter({ on: { a: (_data: string) => {} } });
     expectTypeOf(emitter.emit).toBeCallableWith('a', '');
     type Data = Parameters<typeof emitter.emit<'a'>>;
     expectTypeOf<Data[1]>().toBeString();
   });
   it('infer type for .emit() when data is not needed', () => {
-    const fn = vi.fn(() => {});
-    const emitter = createEventEmitter({ on: { a: fn } });
+    const emitter = createEventEmitter({ on: { a: () => {} } });
     expectTypeOf(emitter.emit).toBeCallableWith('a');
     type Data = Parameters<typeof emitter.emit<'a'>>;
     expectTypeOf<Data>().toEqualTypeOf<[eventKey: 'a']>();
@@ -138,27 +136,55 @@ describe.concurrent('createEventEmitter', () => {
       on: { a: { handler: (_d: { x: number }) => {} } },
     });
     type EmitA = Parameters<typeof emitter.emit<'a'>>;
-    // first parameter is the event key, second is the payload
     expectTypeOf<EmitA[1]>().toEqualTypeOf<{ x: number }>();
   });
 
   it('mixed handlers infer correctly for each event key', () => {
     const emitter = createEventEmitter({
       on: {
-        a: (_s: string) => {},
-        b: { handler: (_n: number) => {} },
+        a: (_string: string) => {},
+        b: { handler: (_number: number) => {} },
       },
     });
-    type EmitA2 = Parameters<typeof emitter.emit<'a'>>;
-    type EmitB2 = Parameters<typeof emitter.emit<'b'>>;
-    expectTypeOf<EmitA2[1]>().toBeString();
-    expectTypeOf<EmitB2[1]>().toBeNumber();
+    type EmitA = Parameters<typeof emitter.emit<'a'>>;
+    type EmitB = Parameters<typeof emitter.emit<'b'>>;
+    expectTypeOf<EmitA[1]>().toBeString();
+    expectTypeOf<EmitB[1]>().toBeNumber();
   });
 
   it('disable is typed to accept only defined event keys', () => {
     const emitter = createEventEmitter({ on: { a: () => {}, b: () => {} } });
-    type DisableParams = Parameters<typeof emitter.disable<'a'>>;
-    // disable only takes the event key; verify it accepts 'a'
-    expectTypeOf<DisableParams[0]>().toEqualTypeOf<'a'>();
+    type DisabledParams = Parameters<typeof emitter.disable<'a'>>;
+    expectTypeOf<DisabledParams[0]>().toEqualTypeOf<'a'>();
+  });
+
+  it('emit returns Promise<void>', () => {
+    const emitter = createEventEmitter({ on: { a: (_: string) => {} } });
+    type Ret = ReturnType<typeof emitter.emit<'a'>>;
+    expectTypeOf<Ret>().toEqualTypeOf<Promise<void>>();
+  });
+
+  it('exported EventEmitter type matches createEventEmitter return type', () => {
+    const emitter = createEventEmitter({
+      on: {
+        a: (_string: string) => {},
+        b: (_number: number) => {},
+      },
+    });
+    expectTypeOf<typeof emitter.emit>().returns.toEqualTypeOf<Promise<void>>();
+    expectTypeOf<typeof emitter.disable>().returns.toBeVoid();
+  });
+
+  it('optional handler parameter is optional for emit', () => {
+    const emitter = createEventEmitter({ on: { a: (_x?: number) => {} } });
+    expectTypeOf(emitter.emit).toBeCallableWith('a');
+    expectTypeOf(emitter.emit).toBeCallableWith('a', 1);
+    type EmitA = Parameters<typeof emitter.emit<'a'>>;
+    expectTypeOf<EmitA[1]>().toEqualTypeOf<number | undefined>();
+  });
+
+  it('disable returns void', () => {
+    const emitter = createEventEmitter({ on: { a: () => {}, b: () => {} } });
+    expectTypeOf<ReturnType<typeof emitter.disable>>().toEqualTypeOf<void>();
   });
 });
