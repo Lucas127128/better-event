@@ -119,7 +119,7 @@ describe.concurrent('createEventEmitter', () => {
   });
 
   it('infer type for .emit() when data is needed', () => {
-    const fn = vi.fn((data: string) => {});
+    const fn = vi.fn((_data: string) => {});
     const emitter = createEventEmitter({ on: { a: fn } });
     expectTypeOf(emitter.emit).toBeCallableWith('a', '');
     type Data = Parameters<typeof emitter.emit<'a'>>;
@@ -131,5 +131,34 @@ describe.concurrent('createEventEmitter', () => {
     expectTypeOf(emitter.emit).toBeCallableWith('a');
     type Data = Parameters<typeof emitter.emit<'a'>>;
     expectTypeOf<Data>().toEqualTypeOf<[eventKey: 'a']>();
+  });
+
+  it('object-form handler preserves parameter type', () => {
+    const emitter = createEventEmitter({
+      on: { a: { handler: (_d: { x: number }) => {} } },
+    });
+    type EmitA = Parameters<typeof emitter.emit<'a'>>;
+    // first parameter is the event key, second is the payload
+    expectTypeOf<EmitA[1]>().toEqualTypeOf<{ x: number }>();
+  });
+
+  it('mixed handlers infer correctly for each event key', () => {
+    const emitter = createEventEmitter({
+      on: {
+        a: (_s: string) => {},
+        b: { handler: (_n: number) => {} },
+      },
+    });
+    type EmitA2 = Parameters<typeof emitter.emit<'a'>>;
+    type EmitB2 = Parameters<typeof emitter.emit<'b'>>;
+    expectTypeOf<EmitA2[1]>().toBeString();
+    expectTypeOf<EmitB2[1]>().toBeNumber();
+  });
+
+  it('disable is typed to accept only defined event keys', () => {
+    const emitter = createEventEmitter({ on: { a: () => {}, b: () => {} } });
+    type DisableParams = Parameters<typeof emitter.disable<'a'>>;
+    // disable only takes the event key; verify it accepts 'a'
+    expectTypeOf<DisableParams[0]>().toEqualTypeOf<'a'>();
   });
 });
