@@ -1,4 +1,5 @@
 import { defineConfig } from 'tsdown';
+import { StaleGuardRecorder } from 'tsdown-stale-guard';
 
 export default defineConfig({
   dts: {
@@ -11,4 +12,5 @@ export default defineConfig({
   attw: {
     profile: 'esm-only',
   },
+  plugins: [StaleGuardRecorder()],
 });
