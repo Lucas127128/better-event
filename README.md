@@ -32,18 +32,70 @@ await emitter.emit('hello', 'world');
 
 ## Features
 
-- create an event emitter with createEventEmitter()
 - register event listeners when initializing
-- emit events asynchronously with emit()
 - disable event listeners with disable()
 - timeout support for event handlers
 - abort event listeners with AbortSignal
 - type-safe event listener registration and emission
-- exports `EventEmitter<T>` type helper for typing emitter instances
 
 > [!IMPORTANT]
 > This project is currently in its early stages.
 > Breaking changes may happen in every version without notice until `v1.0.0`.
+
+## Quick start
+
+- Step 1: Initialize the event emitter
+
+  ```ts
+  import { createEventEmitter } from 'better-event';
+
+  const emitter = createEventEmitter();
+  ```
+
+- Step 2: Add callback function with custom event key
+
+  ```ts
+  import { createEventEmitter } from 'better-event';
+
+  const emitter = createEventEmitter({
+    on: {
+      // 'hello' is the event key
+      hello: () => {
+        console.log('hello');
+      },
+    },
+  });
+  ```
+
+- Step 3 (optional): pass the data to the event callback function
+
+  ```ts
+  import { createEventEmitter } from 'better-event';
+
+  const emitter = createEventEmitter({
+    on: {
+      hello: (name: string) => {
+        console.log('hello', name);
+      },
+    },
+  });
+  ```
+
+- Step 4: Emit the event:
+
+  ```ts
+  import { createEventEmitter } from 'better-event';
+
+  const emitter = createEventEmitter({
+    on: {
+      hello: () => {
+        console.log('hello');
+      },
+    },
+  });
+  await emitter.emit('hello');
+  // => hello
+  ```
 
 ## Usage
 
